@@ -1,0 +1,26 @@
+version: "3.7"
+services:
+  redis:
+    image: "redis:7.0.7"
+    hostname: "redis"
+    ports:
+      - "6379:6379"
+    restart: "always"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    volumes:
+      - "redis-data:/data"
+  server:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    hostname: "server"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "redis"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+volumes:
+  redis:
+    driver: "local"

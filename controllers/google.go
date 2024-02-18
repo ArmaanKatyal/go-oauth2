@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ArmaanKatyal/go-oauth/config"
-	"github.com/ArmaanKatyal/go-oauth/internal"
+	"github.com/ArmaanKatyal/go-oauth2/config"
+	"github.com/ArmaanKatyal/go-oauth2/internal"
 	"github.com/labstack/echo/v4"
 )
 

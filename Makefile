@@ -1,8 +1,8 @@
 run: build
-	./target/go-oauth
+	./target/go-oauth2
 
 build:
-	go build -o ./target/go-oauth
+	go build -o ./target/go-oauth2
 
 clean:
-	rm -f ./target/go-oauth
+	rm -f ./target/go-oauth2

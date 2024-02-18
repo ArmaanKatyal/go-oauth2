@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/ArmaanKatyal/go-oauth/config"
-	"github.com/ArmaanKatyal/go-oauth/controllers"
-	"github.com/ArmaanKatyal/go-oauth/internal"
+	"github.com/ArmaanKatyal/go-oauth2/config"
+	"github.com/ArmaanKatyal/go-oauth2/controllers"
+	"github.com/ArmaanKatyal/go-oauth2/internal"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	internal.InitializeRedis("localhost", "6379")
+	internal.InitializeRedis("redis", "6379")
 
 	e := echo.New()
 	e.Use(middleware.Logger())

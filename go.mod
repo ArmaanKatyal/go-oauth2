@@ -1,4 +1,4 @@
-module github.com/ArmaanKatyal/go-oauth
+module github.com/ArmaanKatyal/go-oauth2
 
 go 1.21.7
 
