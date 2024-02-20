@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/ArmaanKatyal/go-oauth2/config"
 	"github.com/ArmaanKatyal/go-oauth2/internal"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
@@ -75,5 +77,29 @@ func GoogleCallback(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, "Failed to unmarshal user info")
 	}
 
-	return ctx.JSON(http.StatusOK, user)
+	t, err := generateJWT(user)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, "Failed to sign token")
+	}
+
+	// set a cookie with the jwt token
+	cookie := http.Cookie{
+		Name:    "Authorization",
+		Value:   t,
+		Expires: time.Now().Add(24 * time.Hour),
+	}
+	ctx.SetCookie(&cookie)
+
+	return ctx.Redirect(http.StatusFound, "/profile")
+}
+
+func generateJWT(user map[string]interface{}) (string, error) {
+	key := os.Getenv("JWT_SECRET")
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"email":          user["email"],
+		"name":           user["name"],
+		"verified_email": user["verified_email"],
+		"exp":            time.Now().Add(time.Hour * 24).Unix(),
+	})
+	return t.SignedString([]byte(key))
 }

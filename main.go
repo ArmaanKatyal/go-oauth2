@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	internal.InitializeRedis("redis", "6379")
+	internal.InitializeRedis("localhost", "6379")
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -19,6 +19,7 @@ func main() {
 	config.GoogleConfig()
 	e.GET("/google_login", controllers.GoogleLogin)
 	e.GET("/google_callback", controllers.GoogleCallback)
+	e.GET("/profile", controllers.Profile)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
