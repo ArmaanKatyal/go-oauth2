@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,12 +13,14 @@ import (
 	"github.com/ArmaanKatyal/go-oauth2/internal"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 func main() {
 	internal.InitializeRedis("localhost", "6379")
 
 	e := echo.New()
+	e.Logger.SetLevel(log.INFO)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.GET("/health", health)
@@ -27,7 +30,7 @@ func main() {
 	e.GET("/google_callback", controllers.GoogleCallback)
 	e.GET("/profile", controllers.Profile)
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	sig_ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	// Start server
 	go func() {
@@ -36,14 +39,25 @@ func main() {
 		}
 	}()
 	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
-	<-ctx.Done()
+	<-sig_ctx.Done()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
 		e.Logger.Fatal(err)
 	}
+	e.Logger.Info("Server gracefully stopped")
 }
 
-func health(ctx echo.Context) error {
-	return ctx.String(200, "OK")
+func health(c echo.Context) error {
+	req := c.Request()
+	format := `
+		<code>
+		Protocol: %s<br>
+		Host: %s<br>
+		Remote Address: %s<br>
+		Method: %s<br>
+		Path: %s<br>
+		</code>
+	`
+	return c.HTML(http.StatusOK, fmt.Sprintf(format, req.Proto, req.Host, req.RemoteAddr, req.Method, req.URL.Path))
 }
