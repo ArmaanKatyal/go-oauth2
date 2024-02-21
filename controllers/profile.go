@@ -28,8 +28,24 @@ func Profile(ctx echo.Context) error {
 	if err != nil || !parsed.Valid {
 		return ctx.JSON(http.StatusUnauthorized, "Unauthorized")
 	}
-
-	message := fmt.Sprintf("<h1>Welcome %s</h1>", claims.Name)
+	req := ctx.Request()
+	format := `
+		<code>
+		Protocol: %s<br>
+		Host: %s<br>
+		Remote Address: %s<br>
+		Method: %s<br>
+		Path: %s<br>
+		<br>
+		--- Token Info ---
+		<br>
+		Email: %s<br>
+		Name: %s<br>
+		Verified Email: %t<br>
+		</code>
+	`
+	message := fmt.Sprintf(format, req.Proto, req.Host, req.RemoteAddr, req.Method,
+		req.URL.Path, claims.Email, claims.Name, claims.Verified_Email)
 	return ctx.HTML(http.StatusOK, message)
 }
 
