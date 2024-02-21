@@ -1,6 +1,12 @@
 package main
 
 import (
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
+
 	"github.com/ArmaanKatyal/go-oauth2/config"
 	"github.com/ArmaanKatyal/go-oauth2/controllers"
 	"github.com/ArmaanKatyal/go-oauth2/internal"
@@ -21,7 +27,21 @@ func main() {
 	e.GET("/google_callback", controllers.GoogleCallback)
 	e.GET("/profile", controllers.Profile)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+	// Start server
+	go func() {
+		if err := e.Start(":8080"); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal("Shutting down the server")
+		}
+	}()
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
+	<-ctx.Done()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
 
 func health(ctx echo.Context) error {
