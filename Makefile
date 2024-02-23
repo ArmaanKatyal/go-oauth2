@@ -6,3 +6,6 @@ build:
 
 clean:
 	rm -f ./target/go-oauth2
+
+test:
+	go test -v ./...
