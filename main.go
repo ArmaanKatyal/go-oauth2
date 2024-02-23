@@ -11,10 +11,18 @@ import (
 	"github.com/ArmaanKatyal/go-oauth2/config"
 	"github.com/ArmaanKatyal/go-oauth2/controllers"
 	"github.com/ArmaanKatyal/go-oauth2/internal"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
+	}
+}
 
 func main() {
 	internal.InitializeRedis("localhost", "6379")
