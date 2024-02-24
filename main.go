@@ -46,7 +46,7 @@ func main() {
 			e.Logger.Fatal("Shutting down the server")
 		}
 	}()
-	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
 	<-sig_ctx.Done()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
