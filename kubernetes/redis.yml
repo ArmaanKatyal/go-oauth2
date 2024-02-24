@@ -27,9 +27,6 @@ spec:
               hostPort: 6379
               protocol: TCP
           resources: {}
-          volumeMounts:
-            - mountPath: /data
-              name: redis
       hostname: redis
       restartPolicy: Always
 status: {}

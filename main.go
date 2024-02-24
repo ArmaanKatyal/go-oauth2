@@ -25,7 +25,7 @@ func init() {
 }
 
 func main() {
-	internal.InitializeRedis("localhost", "6379")
+	internal.InitializeRedis("redis", "6379")
 
 	e := echo.New()
 	e.Logger.SetLevel(log.INFO)

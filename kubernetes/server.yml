@@ -15,7 +15,7 @@ spec:
         app: server
     spec:
       containers:
-        - image: replace-with-server-image
+        - image: armaan24katyal/go-oauth2
           name: server1
           livenessProbe:
             exec:

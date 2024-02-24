@@ -9,7 +9,7 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
     volumes:
-      - "redis-data:/data"
+      - "redis:/data"
   server:
     build:
       context: .
